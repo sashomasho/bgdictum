@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, BGDict!</string>
+    <string name="app_name">BGDict</string>
+    <string name="dictionary_url">http://github.com/sashomasho/bgdict/raw/master/bgdict.db.zip</string>
+    <string name="no_sdcard_warning">Warning: Can't use SD Card, using iternal storage instead</string>
+    <string name="download_question">Download dictionary file?</string>
+    <string name="download">Download</string>
+    <string name="downloading">Downloading</string>
+    <string name="completed">Completed</string>
+    <string name="quit">Quit</string>
+</resources>
