@@ -10,6 +10,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -49,28 +50,48 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
         translation = (TextView) findViewById(R.id.description_text);
 
         initDataPath();
-
-        db = initDB();
-        
-        if (db != null)
-            postInit();
-        
+        setupDB();
     }
     
-    private void postInit() {
-        Cursor c = db.query(TABLE_TRANSLATIONS, null, null, null, null, null, null);
-        TRANSLATION_COLUMN_INDEX = c.getColumnIndexOrThrow(COLUMN_TRANSLATION);
-        c.close();
+    private void setupDB() {
+        boolean start_again = false;
+        File f = new File(dataPath, DATABASE);
+        if (!f.exists()) {
+            showDialog(DLG_CONFIRM_DOWNLOAD);
+            return;
+        }
+        try {
+            db = initDB(f.getAbsolutePath());
+            start_again = (db == null);
+            if (!start_again) {
+                Cursor c = db.query(TABLE_WORDS, null, null, null, null, null, null);
+                CursorAdapter ca = new WordAdapter(this, c, db);
+                searchField.setAdapter(ca);
+                searchField.setOnItemClickListener(this);
 
-        c = db.query(TABLE_WORDS, null, null, null, null, null, null);
-        CursorAdapter ca = new WordAdapter(this, c, db);
-        searchField.setAdapter(ca);
-        searchField.setOnItemClickListener(this);
-        
+                c = db.query(TABLE_TRANSLATIONS, null, null, null, null, null, null);
+                TRANSLATION_COLUMN_INDEX = c.getColumnIndexOrThrow(COLUMN_TRANSLATION);
+                c.close();
+            }
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+            start_again = true;
+        }
+        if (start_again) {
+            String [] files = new File(dataPath).list();
+            for (String s : files) {
+                f = new File(dataPath + File.separatorChar + s);
+                if (f.delete())
+                    System.out.println(f.getAbsolutePath() + " is GONE");
+            }
+            setupDB();
+        }
     }
-    
+
     private void initDataPath() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separatorChar + "data" + File.separatorChar + getPackageName() + File.separatorChar;
+        char sep = File.separatorChar;
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath()
+                + sep + "data" + sep + getPackageName() + sep;
         File f = new File(path);
         if (!f.exists())
             f.mkdirs();
@@ -79,17 +100,12 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
             f = getDir("dict", MODE_PRIVATE);
         }
         dataPath = f.getAbsolutePath();
+        System.out.println("DATAPATH: " + dataPath);
     }
 
-    private SQLiteDatabase initDB() {
-        System.out.println(dataPath);
-        File f = new File(dataPath, "bgdict.db");
-        if (!f.exists()) {
-            showDialog(DLG_CONFIRM_DOWNLOAD);
-            return null;
-        }
-
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(f.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase initDB(String path) {
+        System.out.println("openind db file " + path);
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
 
         StringBuilder query = new StringBuilder(CREATE_TABLE_QUERY);
 
@@ -136,7 +152,6 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
                         }
                     })
                     .setNegativeButton(R.string.quit, new OnClickListener() {
-                        
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -150,21 +165,25 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
     }
     
     private void startDownload() {
-        String output = dataPath + File.separatorChar + DATABASE;
-        final Downloader dl = new Downloader(this, getString(R.string.dictionary_url), output);
+        final Downloader dl = new Downloader(this, getString(R.string.dictionary_url),
+                dataPath + File.separatorChar + DATABASE);
         dl.start();
         dl.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                
-                if (!dl.getResult())
-                    finish();
-                else {
-                    initDB();
-                    postInit();
+
+                if (!dl.getResult()) {
+                    finish("Download unsuccessfall");
+                } else {
+                    setupDB();
                 }
             }
         });
+    }
+
+    private void finish(String reason) {
+        Toast.makeText(this, reason, Toast.LENGTH_LONG).show();
+        finish();
     }
 
 }

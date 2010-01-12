@@ -10,15 +10,15 @@ import android.widget.CursorAdapter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-class WordAdapter extends CursorAdapter implements Filterable {
+class WordAdapter extends CursorAdapter implements Filterable, DB {
 
-    private String[] QUERY_PROJECTION = new String[] {DB.COLUMN_ID, DB.COLUMN_WORD };
+    private String[] QUERY_PROJECTION = new String[] { COLUMN_ID, COLUMN_WORD };
     private final int WORD_COLUMN_INDEX;
     private SQLiteDatabase db;
 
     public WordAdapter(Context context, Cursor c, SQLiteDatabase db) {
         super(context, c);
-        WORD_COLUMN_INDEX = c.getColumnIndexOrThrow(DB.COLUMN_WORD);
+        WORD_COLUMN_INDEX = c.getColumnIndexOrThrow(COLUMN_WORD);
         this.db = db;
     }
 
@@ -50,7 +50,7 @@ class WordAdapter extends CursorAdapter implements Filterable {
     }
     
     private String getLike(String s) {
-        return DB.COLUMN_WORD + ">= '" + s + "' AND " + DB.COLUMN_WORD + "< '" + s + "��'";
+        return DB.COLUMN_WORD + ">= '" + s + "' AND " + DB.COLUMN_WORD + "< '" + s + '\u044F' +"'";
     }
 
 }

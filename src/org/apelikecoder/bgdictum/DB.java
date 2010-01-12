@@ -4,7 +4,7 @@ import android.provider.BaseColumns;
 
 public interface DB {
     
-    public static final String DATABASE = "bgdict.db";
+    public static final String DATABASE = "bgdictum.db";
     public static final String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS ";
     public static final String TABLE_WORDS = "words";
     public static final String TABLE_TRANSLATIONS = "translations";
