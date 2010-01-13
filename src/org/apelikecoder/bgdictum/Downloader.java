@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.widget.Toast;
 
 public class Downloader extends ProgressDialog implements OnClickListener {
@@ -31,9 +32,11 @@ public class Downloader extends ProgressDialog implements OnClickListener {
     private ExtractTask extractTask;
     private boolean result = false;
     private boolean use_external = false;
+    private String error;
 
     public Downloader(Context context, String in, String outputFile) {
         super(context);
+        this.context = context;
         this.in = in;
         this.outputFile = outputFile;
         try {
@@ -52,12 +55,13 @@ public class Downloader extends ProgressDialog implements OnClickListener {
     }
 
     private void startExtract() {
+        error = null;
         extractTask = new ExtractTask();
         extractTask.execute();
     }
 
     public void start() {
-        File f = new File("/sdcard/bgdictum.db.zip");
+        File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "bgdictum.db.zip");
         if (f.exists()) {
             use_external = true;
             downloadFile = f.getAbsolutePath();
@@ -94,7 +98,7 @@ public class Downloader extends ProgressDialog implements OnClickListener {
         private int count;
         private int size = -1;
 
-        URLConnection conn;
+        private URLConnection conn;
 
         @Override
         protected Integer doInBackground(Void... params) {
@@ -119,7 +123,7 @@ public class Downloader extends ProgressDialog implements OnClickListener {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                error = e.getMessage();
                 e.printStackTrace();
             } finally {
                 cleanup();
@@ -145,6 +149,8 @@ public class Downloader extends ProgressDialog implements OnClickListener {
         }
 
         protected void onPostExecute(Integer result) {
+            if (error != null)
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
             if (size > 0 && size != count)
                 return;
             downloadTask = null;
@@ -153,8 +159,8 @@ public class Downloader extends ProgressDialog implements OnClickListener {
     }
 
     private class ExtractTask extends AsyncTask<Void, Integer, Integer> {
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
+        private BufferedInputStream bis = null;
+        private BufferedOutputStream bos = null;
         @Override
         protected Integer doInBackground(Void... params) {
             int res = 0;
@@ -175,10 +181,11 @@ public class Downloader extends ProgressDialog implements OnClickListener {
                         publishProgress((count * 100)/size);
                 }
             } catch (IOException e) {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                error = e.getMessage();
                 e.printStackTrace();
                 res = 1;
             } finally {
+                cleanup();
             }
             return res;
         }
@@ -190,6 +197,8 @@ public class Downloader extends ProgressDialog implements OnClickListener {
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
+            if (error != null)
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
             if (!use_external)
                 new File(downloadFile).delete();
             if (result == 0)
@@ -208,7 +217,6 @@ public class Downloader extends ProgressDialog implements OnClickListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }
