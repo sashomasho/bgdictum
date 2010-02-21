@@ -6,11 +6,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -19,7 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.CursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -27,13 +28,13 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
 
     private SQLiteDatabase db;
     private AutoCompleteTextView searchField;
-    private TextView translation;
+    private WordView translation;
     private String dataPath;
-    
+
     private int TRANSLATION_COLUMN_INDEX = -1;
-    
+
     private static final int DLG_CONFIRM_DOWNLOAD = 0;
-    
+
     Handler h = new Handler() {
         public void handleMessage(android.os.Message msg) {
             InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -47,12 +48,24 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         searchField = (AutoCompleteTextView) findViewById(R.id.search_edit_query);
-        translation = (TextView) findViewById(R.id.description_text);
+        translation = (WordView) findViewById(R.id.description_text);
 
         initDataPath();
         setupDB();
     }
-    
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Uri uri = intent.getData();
+        if (uri != null) {
+            System.out.println(uri.toString());
+            String word = uri.getHost();
+            searchField.setText(word);
+            searchField.setSelection(word.length());
+        }
+    }
+
     private void setupDB() {
         boolean start_again = false;
         File f = new File(dataPath, DATABASE);
@@ -122,7 +135,7 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
         query.append(END_TABLE);
 
         db.execSQL(query.toString());
-        
+
         return db;
     }
 
@@ -131,12 +144,12 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
         Cursor c = db.query(TABLE_TRANSLATIONS, null, COLUMN_WORD_ID + "='" + id + "'", null, null, null, null);
         if (c.moveToFirst()) {
             String s = c.getString(TRANSLATION_COLUMN_INDEX);
-            translation.setText(s); 
+            translation.setText(s);
         }
         c.close();
         h.sendEmptyMessage(0);
     }
-    
+
     @Override
     protected Dialog onCreateDialog(int id) {
         Dialog dlg = null;
@@ -160,10 +173,10 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
                     })
                     .create();
         }
-            
+
         return dlg;
     }
-    
+
     private void startDownload() {
         final Downloader dl = new Downloader(this, getString(R.string.dictionary_url),
                 dataPath + File.separatorChar + DATABASE);

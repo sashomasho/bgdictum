@@ -27,6 +27,7 @@ public class Downloader extends ProgressDialog implements OnClickListener {
     private String extractMsg;
     private String outputFile;
     private String downloadFile;
+    private String errorMessage;
     private DownloadingTask downloadTask;
     private ExtractTask extractTask;
     private boolean result = false;
@@ -34,6 +35,7 @@ public class Downloader extends ProgressDialog implements OnClickListener {
 
     public Downloader(Context context, String in, String outputFile) {
         super(context);
+        this.context = context;
         this.in = in;
         this.outputFile = outputFile;
         try {
@@ -119,7 +121,7 @@ public class Downloader extends ProgressDialog implements OnClickListener {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                errorMessage = e.getMessage();
                 e.printStackTrace();
             } finally {
                 cleanup();
@@ -145,6 +147,10 @@ public class Downloader extends ProgressDialog implements OnClickListener {
         }
 
         protected void onPostExecute(Integer result) {
+            if (errorMessage != null) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                return;
+            }
             if (size > 0 && size != count)
                 return;
             downloadTask = null;
@@ -175,7 +181,7 @@ public class Downloader extends ProgressDialog implements OnClickListener {
                         publishProgress((count * 100)/size);
                 }
             } catch (IOException e) {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                errorMessage = e.getMessage();
                 e.printStackTrace();
                 res = 1;
             } finally {
@@ -190,6 +196,10 @@ public class Downloader extends ProgressDialog implements OnClickListener {
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
+            if (errorMessage != null) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                return;
+            }
             if (!use_external)
                 new File(downloadFile).delete();
             if (result == 0)

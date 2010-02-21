@@ -8,21 +8,24 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:singleLine="true"
         android:hint="type text here"
         android:completionThreshold="2"
-        android:dropDownWidth="fill_parent"
-        android:inputType="textAutoCorrect"/>
+        android:dropDownWidth="fill_parent" android:inputType="textAutoCorrect"/>
 
 	<ScrollView
        	android:layout_below="@id/search_edit_query"
        	android:layout_width="fill_parent"
        	android:layout_height="fill_parent">
 
-    	<TextView android:id="@+id/description_text"
+    	<org.apelikecoder.bgdictum.WordView
+    	   android:id="@+id/description_text"
     	   android:textSize="18sp"
            android:layout_width="fill_parent"
-           android:layout_height="fill_parent"/>
+           android:layout_height="fill_parent"
+           android:textColorLink="#fff"
+           android:linksClickable="true"
+           android:textColor="#fff"
+           />
     </ScrollView>
 
 </RelativeLayout>
