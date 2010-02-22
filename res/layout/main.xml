@@ -1,30 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:id="@+id/input_area"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:addStatesFromChildren="true"
+        android:gravity="center_vertical"
+        android:paddingRight="0dip"
+        android:background="@android:drawable/edit_text">
+
+        <AutoCompleteTextView
+            android:id="@+id/search_edit_query"
+            android:layout_weight="1"
+            android:hint="type text here"
+            android:completionThreshold="2"
+            android:dropDownWidth="fill_parent"
+            android:dropDownAnchor="@id/input_area"
+            android:inputType="textAutoCorrect"
+            android:layout_toLeftOf="@+id/clear_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:background="@null"
+            />
+
+        <Button
+            android:id="@+id/clear_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_delete"
+            android:layout_alignParentRight="true"
+            />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_below="@id/input_area"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-       <AutoCompleteTextView android:id="@+id/search_edit_query"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="type text here"
-        android:completionThreshold="2"
-        android:dropDownWidth="fill_parent" android:inputType="textAutoCorrect"/>
-
-	<ScrollView
-       	android:layout_below="@id/search_edit_query"
-       	android:layout_width="fill_parent"
-       	android:layout_height="fill_parent">
-
-    	<org.apelikecoder.bgdictum.WordView
-    	   android:id="@+id/description_text"
-    	   android:textSize="18sp"
+        <org.apelikecoder.bgdictum.WordView
+           android:id="@+id/description_text"
+           android:textSize="18sp"
            android:layout_width="fill_parent"
            android:layout_height="fill_parent"
-           android:textColorLink="#fff"
+           android:textColorLink="#ececec"
            android:linksClickable="true"
-           android:textColor="#fff"
+           android:textColor="#ececec"
            />
     </ScrollView>
 

@@ -20,28 +20,24 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class BGDictum extends Activity implements DB, OnItemClickListener {
+public class BGDictum extends Activity implements DB,
+        OnItemClickListener, View.OnClickListener {
 
     private SQLiteDatabase db;
     private AutoCompleteTextView searchField;
+    private Button clear;
     private WordView translation;
     private String dataPath;
+    InputMethodManager mgr;
 
     private int TRANSLATION_COLUMN_INDEX = -1;
 
     private static final int DLG_CONFIRM_DOWNLOAD = 0;
-
-    Handler h = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            mgr.hideSoftInputFromInputMethod(searchField.getWindowToken(), 0);
-            mgr.hideSoftInputFromInputMethod(searchField.getApplicationWindowToken(), 0);
-        };
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +45,9 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
         setContentView(R.layout.main);
         searchField = (AutoCompleteTextView) findViewById(R.id.search_edit_query);
         translation = (WordView) findViewById(R.id.description_text);
-
+        clear = (Button) findViewById(R.id.clear_text);
+        clear.setOnClickListener(this);
+        mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         initDataPath();
         setupDB();
     }
@@ -147,7 +145,7 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
             translation.setText(s);
         }
         c.close();
-        h.sendEmptyMessage(0);
+        mgr.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
     }
 
     @Override
@@ -173,7 +171,6 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
                     })
                     .create();
         }
-
         return dlg;
     }
 
@@ -199,4 +196,10 @@ public class BGDictum extends Activity implements DB, OnItemClickListener {
         finish();
     }
 
+    @Override
+    public void onClick(View v) {
+        searchField.setText("");
+        searchField.requestFocusFromTouch();
+        mgr.showSoftInput(searchField, InputMethodManager.SHOW_FORCED);
+    }
 }
