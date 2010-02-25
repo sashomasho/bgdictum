@@ -25,7 +25,7 @@ class LinksFinder {
             int end = m.end();
 
             LinkSpec spec = new LinkSpec();
-            String url = "bgdictum://" + m.group(0);
+            String url = m.group(0);
             spec.url = url;
             spec.start = start;
             spec.end = end;
