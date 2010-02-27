@@ -1,0 +1,25 @@
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+            android:title="@string/preference_look_and_feel">
+
+	    <CheckBoxPreference
+	        android:key="preference_use_light_theme"
+	        android:title="@string/preference_use_light_theme"
+	    />
+
+        <CheckBoxPreference
+            android:key="preference_enable_word_click"
+            android:title="@string/preference_enable_word_click"
+        />
+
+        <CheckBoxPreference
+            android:key="preference_enable_word_click_popup"
+            android:title="@string/preference_enable_word_click_popup"
+            android:dependency="preference_enable_word_click"
+        />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
