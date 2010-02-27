@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="preferences">Preferences</string>
     <string name="hello">Hello World, BGDict!</string>
     <string name="app_name">BGDictum</string>
     <string name="dictionary_url">http://bulkey.googlecode.com/files/bgdictum.db.zip</string>
@@ -11,4 +12,8 @@
     <string name="extracting">Extracting %d%%</string>
     <string name="completed">Completed</string>
     <string name="quit">Quit</string>
+    <string name="preference_use_light_theme">Use light theme</string>
+    <string name="preference_look_and_feel">Look and feel</string>
+    <string name="preference_enable_word_click">Enable word clicking</string>
+    <string name="preference_enable_word_click_popup">Enable popup</string>
 </resources>

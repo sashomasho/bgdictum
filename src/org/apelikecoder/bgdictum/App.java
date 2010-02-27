@@ -9,6 +9,12 @@ import android.widget.Toast;
 
 public class App extends Application implements DB {
 
+    public static interface PreferenceKeys {
+        public static final String preference_use_light_theme = "preference_use_light_theme";
+        public static final String preference_enable_word_click = "preference_enable_word_click";
+        public static final String preference_enable_word_click_popup = "preference_enable_word_click_popup";
+    }
+
     private SQLiteDatabase db;
     private String dataPath;
 
