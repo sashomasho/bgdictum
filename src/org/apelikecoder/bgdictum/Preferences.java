@@ -15,7 +15,6 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
-    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(App.PreferenceKeys.preference_use_light_theme)) {
         }
