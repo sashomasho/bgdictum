@@ -32,14 +32,12 @@ public class Setup extends Activity implements DB {
                 dlg = new AlertDialog.Builder(this)
                     .setMessage(R.string.download_question)
                     .setPositiveButton(R.string.download, new OnClickListener() {
-                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             startDownload();
                         }
                     })
                     .setNegativeButton(R.string.quit, new OnClickListener() {
-                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             Setup.this.finish();
@@ -55,7 +53,6 @@ public class Setup extends Activity implements DB {
                 app.getDataPath() + File.separatorChar + DATABASE);
         dl.start();
         dl.setOnDismissListener(new OnDismissListener() {
-            @Override
             public void onDismiss(DialogInterface dialog) {
                 if (!dl.getResult()) {
                     finish("Download unsuccessfall");

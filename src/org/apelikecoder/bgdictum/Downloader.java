@@ -76,7 +76,6 @@ public class Downloader extends ProgressDialog implements OnClickListener {
         return result;
     }
 
-    @Override
     public void onClick(DialogInterface dialog, int which) {
         dismiss();
         if (extractTask != null) {

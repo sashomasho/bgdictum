@@ -77,7 +77,6 @@ public class BGDictum extends Activity implements DB,
     }
 
 
-    @Override
     public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
         Cursor c = db.query(TABLE_TRANSLATIONS, null, COLUMN_WORD_ID + "='" + id + "'", null, null, null, null);
         if (c.moveToFirst()) {
@@ -89,7 +88,6 @@ public class BGDictum extends Activity implements DB,
     }
 
 
-    @Override
     public void onClick(View v) {
         searchField.setText("");
         showKeyboard();

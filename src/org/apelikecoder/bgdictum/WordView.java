@@ -104,7 +104,6 @@ public class WordView extends TextView implements OnTouchListener {
         super.setText(ss, type);
     }
 
-    @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN
                 || event.getAction() == MotionEvent.ACTION_MOVE) {
