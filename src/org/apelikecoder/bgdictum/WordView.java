@@ -27,19 +27,18 @@ import android.widget.TextView;
 
 public class WordView extends TextView implements OnTouchListener {
 
-    private static class MyUrlSpan extends ClickableSpan {
-        String word;
+    private String infoWord;
 
-        public MyUrlSpan(String word) {
+    private static class Type1Span extends ClickableSpan {
+        String word;
+        public Type1Span(String word) {
             this.word = word;
         }
-
         @Override
         public void updateDrawState(TextPaint ds) {
             super.updateDrawState(ds);
             ds.setUnderlineText(touchedInstance == this);
         }
-
         @Override
         public void onClick(View widget) {
             Uri uri = Uri.parse("bgdictum://" + word);
@@ -49,7 +48,18 @@ public class WordView extends TextView implements OnTouchListener {
         }
     };
 
-    static MyUrlSpan touchedInstance;
+    private static class Type2Span extends Type1Span {
+        public Type2Span(String word) {
+            super(word);
+        }
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            super.updateDrawState(ds);
+            ds.setTypeface(Typeface.DEFAULT_BOLD);
+        }
+    }
+
+    static Type1Span touchedInstance;
 
     private int touchX, touchY;
     private ScrollView parent;
@@ -88,8 +98,14 @@ public class WordView extends TextView implements OnTouchListener {
                 true : super.onTouchEvent(event);
     }
 
+    public void setWordInfo(String word, String text) {
+        infoWord = word;
+        setText(infoWord.trim().toUpperCase() + "\n\n" + text);
+    }
+
     @Override
     public void setText(CharSequence text, BufferType type) {
+        Integer currentType = LinksFinder.getType(infoWord != null ? infoWord : ""); //XXX
         ArrayList<LinksFinder.LinkSpec> links = LinksFinder.getLinks(text.toString());
         if (links == null) {
             super.setText(text, type);
@@ -99,7 +115,12 @@ public class WordView extends TextView implements OnTouchListener {
         int links_length = links.size();
         for (int i = 0; i < links_length; ++i) {
             LinksFinder.LinkSpec l = links.get(i);
-            ss.setSpan(new MyUrlSpan(l.url), l.start, l.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            Type1Span span;
+            if (currentType == l.type)
+                span = new Type2Span(l.url);
+            else
+                span = new Type1Span(l.url);
+            ss.setSpan(span, l.start, l.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         super.setText(ss, type);
     }
@@ -124,7 +145,7 @@ public class WordView extends TextView implements OnTouchListener {
             int line = layout.getLineForVertical(y);
             int off = layout.getOffsetForHorizontal(line, x);
 
-            MyUrlSpan[] candidates = ((Spannable) getText()).getSpans(off, off, MyUrlSpan.class);
+            Type1Span[] candidates = ((Spannable) getText()).getSpans(off, off, Type1Span.class);
             if (candidates.length > 0) {
                 touchedInstance = candidates[0];
             } else {
