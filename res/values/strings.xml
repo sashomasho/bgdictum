@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="database_installed_successfully">Database installed successfully</string>
+    <string name="unknown_error_occured">Unknown error occured.</string>
+    <string name="unable_to_create_file">Unable to create file!</string>
+    <string name="please_wait">Please wait...</string>
     <string name="preferences">Preferences</string>
     <string name="hello">Hello World, BGDict!</string>
     <string name="app_name">BGDictum</string>
