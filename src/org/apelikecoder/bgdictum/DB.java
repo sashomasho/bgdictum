@@ -16,8 +16,4 @@ public interface DB {
     public static final String COLUMN_WORD_ID = "word_id";
     public static final String COLUMN_TRANSCRIPTION = "transcription";
     public static final String COLUMN_TRANSLATION = "translation";
-    
-    public static final String TABLE_GLOBAL_SETTINGS = "global_settings";
-    public static final String COLUMN_GLOBAL_SETTINGS_KEY = "key";
-    public static final String COLUMN_GLOBAL_SETTINGS_VALUE = "value";
 }

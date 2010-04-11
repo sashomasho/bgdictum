@@ -49,7 +49,7 @@ public class App extends Application implements DB {
         if (!f.exists())
             return false;
 
-        initDB(f.getAbsolutePath());
+        db = SQLiteDatabase.openDatabase(f.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
         if (db == null) {
             String [] files = new File(dataPath).list();
             for (String s : files) {
@@ -60,29 +60,6 @@ public class App extends Application implements DB {
             return false;
         }
         return true;
-    }
-    
-    private void initDB(String path) {
-        System.out.println("openind db file " + path);
-        db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
-
-        StringBuilder query = new StringBuilder(CREATE_TABLE_QUERY);
-
-        query.append(TABLE_GLOBAL_SETTINGS);
-        query.append(START_TABLE);
-        query.append(COLUMN_ID);
-        query.append(TYPE_ID);
-        query.append(SEPARATE_COLUMN);
-        query.append(COLUMN_GLOBAL_SETTINGS_KEY);
-        query.append(TYPE_TEXT);
-        query.append(SEPARATE_COLUMN);
-        query.append(COLUMN_GLOBAL_SETTINGS_VALUE);
-        query.append(TYPE_TEXT);
-        query.append(END_TABLE);
-
-        db.execSQL(query.toString());
-
-        return;
     }
     
     public String getDataPath() {

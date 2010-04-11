@@ -28,7 +28,7 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
     private App app;
     private InstanceState state;
     private ProgressDialog progress;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +54,6 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
                 dlg = new AlertDialog.Builder(this)
                     .setMessage(R.string.download_question)
                     .setPositiveButton(R.string.download, new OnClickListener() {
-                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             startDownload();
@@ -62,7 +61,6 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
                         }
                     })
                     .setNegativeButton(R.string.quit, new OnClickListener() {
-                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             Setup.this.finish();
@@ -79,7 +77,7 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
         }
         return dlg;
     }
-    
+
     private void startDownload() {
         try {
             state.downloadFile = File.createTempFile("download", null,
@@ -135,7 +133,7 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
         if (progress == null) return;
         progress.setMessage(msg);
     }
-    
+
     @Override
     public Object onRetainNonConfigurationInstance() {
         if (state.downloader != null)
