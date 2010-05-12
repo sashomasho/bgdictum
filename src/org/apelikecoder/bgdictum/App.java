@@ -3,6 +3,10 @@ package org.apelikecoder.bgdictum;
 import java.io.File;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.widget.Toast;
@@ -21,7 +25,8 @@ public class App extends Application implements DB {
     @Override
     public void onCreate() {
         super.onCreate();
-        initDataPath();
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+            initDataPath();
     }
     
     public SQLiteDatabase getDb() {

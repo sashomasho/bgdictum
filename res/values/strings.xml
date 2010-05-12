@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sdcard_not_found">SDCard not found</string>
     <string name="database_installed_successfully">Database installed successfully</string>
     <string name="unknown_error_occured">Unknown error occured.</string>
     <string name="unable_to_create_file">Unable to create file!</string>

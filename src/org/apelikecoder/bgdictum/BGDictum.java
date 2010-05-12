@@ -1,12 +1,16 @@
 package org.apelikecoder.bgdictum;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class BGDictum extends Activity implements DB,
@@ -26,13 +31,30 @@ public class BGDictum extends Activity implements DB,
     private WordView translation;
     private InputMethodManager mgr;
 
+    public static final String FINISH_MSG = "start_fataility";
+
     private int TRANSLATION_COLUMN_INDEX = -1;
     private static final int ID_MENU_PREFERENCES = 101;
     private static final int ID_MENU_QUIT = 102;
+    
+    private BroadcastReceiver breceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("card ejected, ta-ta");
+            finish();
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, R.string.sdcard_not_found, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         setContentView(R.layout.main);
         searchField = (AutoCompleteTextView) findViewById(R.id.search_edit_query);
         translation = (WordView) findViewById(R.id.description_text);
@@ -43,6 +65,7 @@ public class BGDictum extends Activity implements DB,
             startActivity(new Intent(this, Setup.class));
             finish();
         }
+        registerReceiver(breceiver, new IntentFilter("android.intent.action.MEDIA_EJECT"));
     }
 
     @Override
@@ -54,6 +77,11 @@ public class BGDictum extends Activity implements DB,
             String word = uri.getHost();
             searchField.setText(word);
             searchField.setSelection(word.length());
+        } else {
+            Bundle extras = intent.getExtras();
+            if (extras != null && extras.getBoolean((FINISH_MSG))) {
+                finish();
+            }
         }
     }
     
