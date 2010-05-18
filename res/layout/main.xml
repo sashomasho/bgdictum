@@ -53,4 +53,10 @@
            />
     </ScrollView>
 
+    <org.apelikecoder.bgdictum.PopupView
+        android:id="@+id/popup"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
+
 </RelativeLayout>

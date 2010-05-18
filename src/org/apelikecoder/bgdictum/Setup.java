@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.widget.Toast;
 
 public class Setup extends Activity implements DB, ProgressListener, OnCancelListener {
@@ -28,10 +29,14 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
     private App app;
     private InstanceState state;
     private ProgressDialog progress;
+    private PowerManager.WakeLock mLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PowerManager mgr = (PowerManager) getSystemService(POWER_SERVICE);
+        mLock = mgr.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "bgdictum");
+        mLock.acquire();
         app = (App) getApplication();
         state = (InstanceState) getLastNonConfigurationInstance();
         if (state == null) {
@@ -87,7 +92,7 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
             Toast.makeText(this, R.string.unable_to_create_file, Toast.LENGTH_LONG);
             return;
         }
-        state.downloader = new DownloadingTask(this, getString(R.string.dictionary_url_test), state.downloadFile);
+        state.downloader = new DownloadingTask(this, getString(R.string.dictionary_url), state.downloadFile);
         state.downloader.execute();
     }
 
@@ -155,5 +160,11 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
             state.extractor.cancel(true);
             state.extractor = null;
         }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mLock.release();
     }
 }

@@ -48,16 +48,10 @@ public class BGDictum extends Activity implements DB,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            Toast.makeText(this, R.string.sdcard_not_found, Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
         setContentView(R.layout.main);
         searchField = (AutoCompleteTextView) findViewById(R.id.search_edit_query);
         translation = (WordView) findViewById(R.id.description_text);
+        translation.setPopup((PopupView)findViewById(R.id.popup));
         clear = (Button) findViewById(R.id.clear_text);
         clear.setOnClickListener(this);
         mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -66,6 +60,17 @@ public class BGDictum extends Activity implements DB,
             finish();
         }
         registerReceiver(breceiver, new IntentFilter("android.intent.action.MEDIA_EJECT"));
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, R.string.sdcard_not_found, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
     }
 
     @Override
@@ -132,8 +137,9 @@ public class BGDictum extends Activity implements DB,
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem m = menu.add(Menu.NONE, ID_MENU_PREFERENCES, Menu.NONE, R.string.preferences);
-        m.setIcon(android.R.drawable.ic_menu_preferences);
+        MenuItem m;
+        //m = menu.add(Menu.NONE, ID_MENU_PREFERENCES, Menu.NONE, R.string.preferences);
+        //m.setIcon(android.R.drawable.ic_menu_preferences);
         m = menu.add(Menu.NONE, ID_MENU_QUIT, Menu.NONE, R.string.quit);
         m.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         return super.onCreateOptionsMenu(menu);
