@@ -15,13 +15,16 @@ import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.View.OnTouchListener;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class WordView extends TextView implements OnTouchListener {
 
     private PopupView popup;
     private String infoWord;
+    private ScrollView parent;
 
     private static class Type1Span extends ClickableSpan {
         String word;
@@ -76,6 +79,14 @@ public class WordView extends TextView implements OnTouchListener {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        ViewParent p = getParent();
+        if (p instanceof ScrollView)
+            parent = (ScrollView) p;
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         return event.getAction() == MotionEvent.ACTION_DOWN ?
                 true : super.onTouchEvent(event);
@@ -118,8 +129,8 @@ public class WordView extends TextView implements OnTouchListener {
             x -= getTotalPaddingLeft();
             y -= getTotalPaddingTop();
 
-            int xx = x;
-            int yy = y;
+            int xx = getRealPosX(x);
+            int yy = getRealPosY(y);
 
             x += getScrollX();
             y += getScrollY();
@@ -147,6 +158,14 @@ public class WordView extends TextView implements OnTouchListener {
 
     public void setPopup(PopupView popup) {
         this.popup = popup;
+    }
+
+    private int getRealPosX(int val) {
+        return parent == null ? val : val - parent.getScrollX();
+    }
+
+    private int getRealPosY(int val) {
+        return parent == null ? val : val - parent.getScrollY();
     }
 
 }
