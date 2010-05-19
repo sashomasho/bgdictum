@@ -83,6 +83,15 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
         return dlg;
     }
 
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        if (state.downloader != null)
+            state.downloader.setProgressListener(null);
+        if (state.extractor != null)
+            state.extractor.setProgressListener(null);
+        return state;
+    }
+
     private void startDownload() {
         try {
             state.downloadFile = File.createTempFile("download", null,
@@ -101,12 +110,10 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
         finish();
     }
 
-    @Override
     public Context getContext() {
         return this;
     }
 
-    @Override
     public void onComplete(boolean success) {
         if (!success) {
             String errorMsg = state.extractor != null 
@@ -133,22 +140,11 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
         }
     }
 
-    @Override
     public void onProgress(String msg) {
         if (progress == null) return;
         progress.setMessage(msg);
     }
 
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        if (state.downloader != null)
-            state.downloader.setProgressListener(null);
-        if (state.extractor != null)
-            state.extractor.setProgressListener(null);
-        return state;
-    }
-
-    @Override
     public void onCancel(DialogInterface dialog) {
         if (state.downloader != null) {
             state.downloader.setProgressListener(null);
