@@ -13,7 +13,7 @@
         android:paddingRight="0dip"
         android:background="@android:drawable/edit_text">
 
-        <AutoCompleteTextView
+        <org.apelikecoder.bgdictum.MyAutoCompleteTextView
             android:id="@+id/search_edit_query"
             android:layout_weight="1"
             android:hint="type text here"

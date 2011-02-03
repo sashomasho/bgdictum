@@ -25,8 +25,9 @@ public class WordView extends TextView implements OnTouchListener {
     private PopupView popup;
     private String infoWord;
     private ScrollView parent;
+    private boolean mPopupEnabled;
 
-    private static class Type1Span extends ClickableSpan {
+    private class Type1Span extends ClickableSpan {
         String word;
         public Type1Span(String word) {
             this.word = word;
@@ -45,7 +46,7 @@ public class WordView extends TextView implements OnTouchListener {
         }
     };
 
-    private static class Type2Span extends Type1Span {
+    private class Type2Span extends Type1Span {
         public Type2Span(String word) {
             super(word);
         }
@@ -56,7 +57,7 @@ public class WordView extends TextView implements OnTouchListener {
         }
     }
 
-    private static Type1Span touchedInstance;
+    private Type1Span touchedInstance;
 
     public WordView(Context context) {
         super(context);
@@ -99,24 +100,27 @@ public class WordView extends TextView implements OnTouchListener {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        Integer currentType = LinksFinder.getType(infoWord != null ? infoWord : ""); //XXX
-        ArrayList<LinksFinder.LinkSpec> links = LinksFinder.getLinks(text.toString());
-        if (links == null) {
-            super.setText(text, type);
-            return;
+        if (mPopupEnabled) {
+            Integer currentType = LinksFinder.getType(infoWord != null ? infoWord : ""); //XXX
+            ArrayList<LinksFinder.LinkSpec> links = LinksFinder.getLinks(text.toString());
+            if (links == null) {
+                super.setText(text, type);
+                return;
+            }
+            SpannableString ss = new SpannableString(text);
+            int links_length = links.size();
+            for (int i = 0; i < links_length; ++i) {
+                LinksFinder.LinkSpec l = links.get(i);
+                Type1Span span;
+                if (currentType == l.type)
+                    span = new Type2Span(l.url);
+                else
+                    span = new Type1Span(l.url);
+                ss.setSpan(span, l.start, l.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            text = ss;
         }
-        SpannableString ss = new SpannableString(text);
-        int links_length = links.size();
-        for (int i = 0; i < links_length; ++i) {
-            LinksFinder.LinkSpec l = links.get(i);
-            Type1Span span;
-            if (currentType == l.type)
-                span = new Type2Span(l.url);
-            else
-                span = new Type1Span(l.url);
-            ss.setSpan(span, l.start, l.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        super.setText(ss, type);
+        super.setText(text, type);
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -145,10 +149,11 @@ public class WordView extends TextView implements OnTouchListener {
             } else {
                 touchedInstance = null;
             }
-            if (popup != null && touchedInstance != null)
+            if (mPopupEnabled && popup != null && touchedInstance != null)
                 popup.setPopupText(xx, yy, touchedInstance.word);
         } else {
-            popup.clear();
+            if (popup != null)
+                popup.clear();
             if (touchedInstance != null) {
                 touchedInstance = null;
             }
@@ -168,4 +173,7 @@ public class WordView extends TextView implements OnTouchListener {
         return parent == null ? val : val - parent.getScrollY();
     }
 
+    public void setPopupEnabled(boolean enabled) {
+        mPopupEnabled = enabled;
+    } 
 }

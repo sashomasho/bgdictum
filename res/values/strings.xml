@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="menu_preferences">Preferences</string>
+    <string name="clear_history">Clear history now</string>
+    <string name="clear_history_on_exit">Clear history on exit</string>
+    <string name="prefs_history_title">History</string>
+    <string name="history">History</string>
     <string name="sdcard_not_found">SDCard not found</string>
     <string name="database_installed_successfully">Database installed successfully</string>
-    <string name="unknown_error_occured">Unknown error occured.</string>
+    <string name="unknown_error_occured">Unknown error occured</string>
     <string name="unable_to_create_file">Unable to create file!</string>
     <string name="please_wait">Please wait...</string>
     <string name="preferences">Preferences</string>
@@ -10,7 +15,7 @@
     <string name="app_name">BGDictum</string>
     <string name="dictionary_url">http://bulkey.googlecode.com/files/bgdictum.db.zip</string>
     <string name="dictionary_url_test">http://cloud.github.com/downloads/sashomasho/bgdictum/test.zip</string>
-    <string name="no_sdcard_warning">Warning: Can't use SD Card, using iternal storage instead</string>
+    <string name="no_sdcard_warning">Warning: Can\'t use SD Card, using internal storage instead</string>
     <string name="download_question">Download dictionary file?</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading %d%%</string>

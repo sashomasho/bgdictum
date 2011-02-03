@@ -34,9 +34,6 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PowerManager mgr = (PowerManager) getSystemService(POWER_SERVICE);
-        mLock = mgr.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "bgdictum");
-        mLock.acquire();
         app = (App) getApplication();
         state = (InstanceState) getLastNonConfigurationInstance();
         if (state == null) {
@@ -50,7 +47,15 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
                 state.extractor.setProgressListener(this);
         }
     }
-    
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PowerManager mgr = (PowerManager) getSystemService(POWER_SERVICE);
+        mLock = mgr.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "bgdictum");
+        mLock.acquire();
+    }
+
     @Override
     protected Dialog onCreateDialog(int id) {
         Dialog dlg = null;
@@ -160,7 +165,7 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
     
     @Override
     protected void onPause() {
-        super.onPause();
         mLock.release();
+        super.onPause();
     }
 }

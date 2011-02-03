@@ -4,22 +4,39 @@
     <PreferenceCategory
             android:title="@string/preference_look_and_feel">
 
+<!--
 	    <CheckBoxPreference
 	        android:key="preference_use_light_theme"
 	        android:title="@string/preference_use_light_theme"
 	    />
+-->
 
         <CheckBoxPreference
             android:key="preference_enable_word_click"
             android:title="@string/preference_enable_word_click"
+            android:defaultValue="false"
         />
 
+<!--
         <CheckBoxPreference
             android:key="preference_enable_word_click_popup"
             android:title="@string/preference_enable_word_click_popup"
             android:dependency="preference_enable_word_click"
         />
+-->
 
     </PreferenceCategory>
-
+    
+    <PreferenceCategory
+            android:title="@string/prefs_history_title">
+        <CheckBoxPreference
+            android:key="preference_clear_history_on_exit"
+            android:title="@string/clear_history_on_exit"
+        />
+        <PreferenceScreen
+            android:key="history"
+            android:title="@string/clear_history"
+            android:persistent="false"
+        />
+    </PreferenceCategory>    
 </PreferenceScreen>

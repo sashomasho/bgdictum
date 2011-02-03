@@ -3,10 +3,7 @@ package org.apelikecoder.bgdictum;
 import java.io.File;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.widget.Toast;
@@ -17,14 +14,19 @@ public class App extends Application implements DB {
         public static final String preference_use_light_theme = "preference_use_light_theme";
         public static final String preference_enable_word_click = "preference_enable_word_click";
         public static final String preference_enable_word_click_popup = "preference_enable_word_click_popup";
+        public static final String preference_history = "history";
+        public static final String preference_clear_history_on_exit = "preference_clear_history_on_exit";
     }
 
     private SQLiteDatabase db;
     private String dataPath;
+    private RecentSearchesConnector recentConnector;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        recentConnector = new RecentSearchesConnector(this);
+
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
             initDataPath();
     }
@@ -54,7 +56,11 @@ public class App extends Application implements DB {
         if (!f.exists())
             return false;
 
-        db = SQLiteDatabase.openDatabase(f.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+        try {
+            db = SQLiteDatabase.openDatabase(f.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         if (db == null) {
             String [] files = new File(dataPath).list();
             for (String s : files) {
@@ -70,5 +76,8 @@ public class App extends Application implements DB {
     public String getDataPath() {
         return dataPath;
     }
-    
+
+    public RecentSearchesConnector getRecentConnector() {
+        return recentConnector;
+    }
 }
