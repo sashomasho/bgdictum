@@ -26,7 +26,7 @@ class WordAdapter extends CursorAdapter implements Filterable, DB {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final TextView view = (TextView) inflater.inflate(
-                android.R.layout.simple_dropdown_item_1line, parent, false);
+                R.layout.simple_dropdown_item_1line, parent, false);
         view.setText(cursor.getString(WORD_COLUMN_INDEX));
         return view;
     }

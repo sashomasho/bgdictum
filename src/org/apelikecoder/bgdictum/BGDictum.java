@@ -58,6 +58,7 @@ public class BGDictum extends Activity implements DB,
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        App.setupTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         searchField = (MyAutoCompleteTextView) findViewById(R.id.search_edit_query);
@@ -69,18 +70,19 @@ public class BGDictum extends Activity implements DB,
         if (!checkDB()) {
             startActivity(new Intent(this, Setup.class));
             finish();
+        } else {
+            app = (App) getApplication();
+    
+            String last = (String) getLastNonConfigurationInstance();
+            if (last == null) {
+                Cursor c = app.getRecentConnector().getSearchCursor(null);
+                if (c.moveToFirst())
+                    last = c.getString(c.getColumnIndex(RecentSearchesConnector.ITEM));
+                c.close();
+            }
+            if (!TextUtils.isEmpty(last))
+                searchForText(last);
         }
-        app = (App) getApplication();
-
-        String last = (String) getLastNonConfigurationInstance();
-        if (last == null) {
-            Cursor c = app.getRecentConnector().getSearchCursor(null);
-            if (c.moveToFirst())
-                last = c.getString(c.getColumnIndex(RecentSearchesConnector.ITEM));
-            c.close();
-        }
-        if (!TextUtils.isEmpty(last))
-            searchForText(last);
     };
 
     @Override

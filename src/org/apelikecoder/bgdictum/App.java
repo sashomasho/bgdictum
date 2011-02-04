@@ -3,9 +3,11 @@ package org.apelikecoder.bgdictum;
 import java.io.File;
 
 import android.app.Application;
+import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 public class App extends Application implements DB {
@@ -36,10 +38,7 @@ public class App extends Application implements DB {
     }
     
     public void initDataPath() {
-        char sep = File.separatorChar;
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath()
-                + sep + "data" + sep + getPackageName() + sep;
-        File f = new File(path);
+        File f = new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName());
         if (!f.exists())
             f.mkdirs();
         if (!f.canWrite()) {
@@ -79,5 +78,11 @@ public class App extends Application implements DB {
 
     public RecentSearchesConnector getRecentConnector() {
         return recentConnector;
+    }
+
+    public static void setupTheme(Context ctx) {
+        boolean useLightTheme = PreferenceManager.getDefaultSharedPreferences(ctx)
+            .getBoolean(PreferenceKeys.preference_use_light_theme, false);
+        ctx.setTheme(useLightTheme ? R.style.BGDictumLight: R.style.BGDictumBlack);
     }
 }

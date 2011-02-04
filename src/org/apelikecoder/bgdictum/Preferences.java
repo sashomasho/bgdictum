@@ -9,6 +9,7 @@ public class Preferences extends PreferenceActivity implements OnPreferenceClick
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        App.setupTheme(this);
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         findPreference(App.PreferenceKeys.preference_history).setOnPreferenceClickListener(this);

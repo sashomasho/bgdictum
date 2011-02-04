@@ -33,6 +33,7 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        App.setupTheme(this);
         super.onCreate(savedInstanceState);
         app = (App) getApplication();
         state = (InstanceState) getLastNonConfigurationInstance();
