@@ -23,25 +23,53 @@ public class App extends Application implements DB {
     private SQLiteDatabase db;
     private String dataPath;
     private RecentSearchesConnector recentConnector;
+//
+//    private BroadcastReceiver sdcardReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            System.out.println(">>>>>>>>>>>>>>>.. " + intent.getAction());
+//            if (intent.getAction().equals(Intent.ACTION_MEDIA_EJECT)
+//                    || intent.getAction().equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
+//                if (dataPath.contains(Environment.getExternalStorageDirectory().getAbsolutePath())) {
+//                    db.close();
+//                    db = null;
+//                    System.out.println("CARD EJECTED, ta-ta");
+//                }
+//            } else if (intent.getAction().equals(Intent.ACTION_MEDIA_MOUNTED)) {
+//                System.out.println("MOUNTED, try to recover");
+//                if (db == null) {
+//                    setupDB();
+//                }
+//            }
+//        }
+//    };
 
     @Override
     public void onCreate() {
         super.onCreate();
         recentConnector = new RecentSearchesConnector(this);
-
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-            initDataPath();
+        //initDataPath();
+//        IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_UNMOUNTED);
+//        filter.addAction(Intent.ACTION_MEDIA_EJECT);
+//        filter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+//        registerReceiver(sdcardReceiver, filter);
+        System.out.println("UP AND RUNNING");
+        //registerReceiver(sdcardReceiver, new IntentFilter(Intent.ACTION_MEDIA_EJECT));
+        //registerReceiver(sdcardReceiver, new IntentFilter(Intent.ACTION_MEDIA_MOUNTED));
     }
     
     public SQLiteDatabase getDb() {
         return db;
     }
     
-    public void initDataPath() {
-        File f = new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName());
-        if (!f.exists())
-            f.mkdirs();
-        if (!f.canWrite()) {
+    private void initDataPath() {
+        File f = null;
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            f = new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName());
+            if (!f.exists())
+                f.mkdirs();
+        }
+        if (f == null || !f.canWrite()) {
             Toast.makeText(this, R.string.no_sdcard_warning, Toast.LENGTH_SHORT);
             f = getDir("dict", MODE_PRIVATE);
         }
@@ -51,6 +79,7 @@ public class App extends Application implements DB {
     }
     
     public boolean setupDB() {
+        initDataPath();
         File f = new File(dataPath, DATABASE);
         if (!f.exists())
             return false;

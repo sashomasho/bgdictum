@@ -7,12 +7,16 @@
 	    <CheckBoxPreference
 	        android:key="preference_use_light_theme"
 	        android:title="@string/preference_use_light_theme"
+            android:summaryOn="@string/preference_use_light_theme_summary"
+            android:summaryOff="@string/preference_use_light_theme_summary"
             android:defaultValue="false"
 	    />
 
         <CheckBoxPreference
             android:key="preference_enable_word_click"
             android:title="@string/preference_enable_word_click"
+            android:summaryOn="@string/preference_enable_word_click_summary"
+            android:summaryOff="@string/preference_enable_word_click_summary"
             android:defaultValue="false"
         />
 
@@ -31,6 +35,8 @@
         <CheckBoxPreference
             android:key="preference_clear_history_on_exit"
             android:title="@string/clear_history_on_exit"
+            android:summaryOn="@string/clear_history_on_exit_summary"
+            android:summaryOff="@string/clear_history_on_exit_summary"
         />
         <PreferenceScreen
             android:key="history"

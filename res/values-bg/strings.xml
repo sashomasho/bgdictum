@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_preferences">Настройки</string>
+    <string name="clear_history">Изчисти история</string>
+    <string name="clear_history_on_exit">Изчистване при изход</string>
+    <string name="clear_history_on_exit_summary">Изчистване на историята при изход от програмата</string>
+    <string name="prefs_history_title">История</string>
+    <string name="history">История</string>
+    <string name="sdcard_not_found">Не е намерена SD карта в устройството</string>
+    <string name="unknown_error_occured">Грешка</string>
+    <string name="please_wait">Моля изчакайте...</string>
+    <string name="preferences">Настройки</string>
+    <string name="download_question_title">Изтегляне на данните</string>
+    <string name="download_question">Файлът е с размер около 7MB и e за предпочитане да бъде свален през WiFi.</string>
+    <string name="download">Изтегляне</string>
+    <string name="downloading">Изтегляне %d%%</string>
+    <string name="extracting">Разрахивиране %d%%</string>
+    <string name="completed">Операцията завърши успешно</string>
+    <string name="quit">Изход</string>
+    <string name="preference_use_light_theme">Светла тема</string>
+    <string name="preference_use_light_theme_summary">Използване на светла тема в програмата (*Изисква рестарт)</string>
+    <string name="preference_look_and_feel">Визуални настройки</string>
+    <string name="preference_enable_word_click">Търсене чрез селектиране в резултата</string>
+    <string name="preference_enable_word_click_summary">(*Изисква рестарт)</string>
+    <string name="warning">Внимание</string>
+    <string name="no_sdcard_setup_message">Не е намерена SD карта в устройството. Искате ли данните да се изтеглят във вътрешната памет?</string>
+    <string name="yes">Да</string>
+    <string name="query_hint">търсене</string>
+</resources>

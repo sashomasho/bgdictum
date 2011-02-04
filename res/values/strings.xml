@@ -2,7 +2,8 @@
 <resources>
     <string name="menu_preferences">Preferences</string>
     <string name="clear_history">Clear history now</string>
-    <string name="clear_history_on_exit">Clear history on exit</string>
+    <string name="clear_history_on_exit">Clear on exit</string>
+    <string name="clear_history_on_exit_summary">Clear history on exit</string>
     <string name="prefs_history_title">History</string>
     <string name="history">History</string>
     <string name="sdcard_not_found">SDCard not found</string>
@@ -16,14 +17,22 @@
     <string name="dictionary_url">http://bulkey.googlecode.com/files/bgdictum.db.zip</string>
     <string name="dictionary_url_test">http://cloud.github.com/downloads/sashomasho/bgdictum/test.zip</string>
     <string name="no_sdcard_warning">Warning: Can\'t use SD Card, using internal storage instead</string>
-    <string name="download_question">Download dictionary file?</string>
+    <string name="download_question_title">Download dictionary file</string>
+    <string name="download_question">The file is approximately 7MB in size, so you may want to download it through a WiFi connection.</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading %d%%</string>
     <string name="extracting">Extracting %d%%</string>
     <string name="completed">Completed</string>
     <string name="quit">Quit</string>
     <string name="preference_use_light_theme">Use light theme</string>
+    <string name="preference_use_light_theme_summary">(*Requires restart)</string>
     <string name="preference_look_and_feel">Look and feel</string>
     <string name="preference_enable_word_click">Enable word clicking</string>
+    <string name="preference_enable_word_click_summary">(*Requires restart)</string>
     <string name="preference_enable_word_click_popup">Enable popup</string>
+    <string name="warning">Warning</string>
+    <string name="no_sdcard_setup_message">Your sdcard is not currenntly mounted. Do you want to download and extract dictionary data on internal storage?</string>
+    <string name="yes">Yes</string>
+    <string name="can_t_find_db_is_your_sdcard_mounted">Can\'t find db, is your sdcard mounted?</string>
+    <string name="query_hint">type text here</string>
 </resources>

@@ -16,7 +16,7 @@
         <org.apelikecoder.bgdictum.MyAutoCompleteTextView
             android:id="@+id/search_edit_query"
             android:layout_weight="1"
-            android:hint="type text here"
+            android:hint="@string/query_hint"
             android:completionThreshold="2"
             android:dropDownWidth="fill_parent"
             android:dropDownAnchor="@id/input_area"

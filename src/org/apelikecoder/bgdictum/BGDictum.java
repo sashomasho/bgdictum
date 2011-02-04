@@ -3,11 +3,8 @@ package org.apelikecoder.bgdictum;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -45,14 +42,9 @@ public class BGDictum extends Activity implements DB,
     private static final int ID_MENU_PREFS = 102;
     private static final int ID_MENU_HISTORY = 103;
     private static final int DLG_HISTORY = 1111;
-    
-    private BroadcastReceiver sdcardReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            System.out.println("card ejected, ta-ta");
-            finish();
-        }
-    };
+    private static final int DLG_CONFIRM_NOSDCARD = 2222;
+    private boolean skipExit;
+
 
     private boolean mClearHistory;
 
@@ -67,12 +59,22 @@ public class BGDictum extends Activity implements DB,
         clear = (Button) findViewById(R.id.clear_text);
         clear.setOnClickListener(this);
         mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        app = (App) getApplication();
+
+        postCreateCheckDB();
+        if (app.getDb() == null &&
+                !Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            showDialog(DLG_CONFIRM_NOSDCARD);
+            skipExit = true;
+        }
+        
+    };
+
+    private void postCreateCheckDB() { 
         if (!checkDB()) {
             startActivity(new Intent(this, Setup.class));
             finish();
         } else {
-            app = (App) getApplication();
-    
             String last = (String) getLastNonConfigurationInstance();
             if (last == null) {
                 Cursor c = app.getRecentConnector().getSearchCursor(null);
@@ -83,14 +85,14 @@ public class BGDictum extends Activity implements DB,
             if (!TextUtils.isEmpty(last))
                 searchForText(last);
         }
-    };
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(sdcardReceiver, new IntentFilter(Intent.ACTION_MEDIA_EJECT));
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            Toast.makeText(this, R.string.sdcard_not_found, Toast.LENGTH_LONG).show();
+        if (app.getDb() == null && !skipExit) {
+            skipExit = false;
+            Toast.makeText(this, R.string.can_t_find_db_is_your_sdcard_mounted, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -106,7 +108,6 @@ public class BGDictum extends Activity implements DB,
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(sdcardReceiver);
         if (isFinishing()) {
             if (mClearHistory)
                 app.getRecentConnector().clearSearchHistory();
@@ -208,7 +209,7 @@ public class BGDictum extends Activity implements DB,
         //m = menu.add(Menu.NONE, ID_MENU_PREFERENCES, Menu.NONE, R.string.preferences);
         //m.setIcon(android.R.drawable.ic_menu_preferences);
         m = menu.add(Menu.NONE, ID_MENU_HISTORY, Menu.NONE, R.string.history);
-        m.setIcon(android.R.drawable.ic_menu_info_details);
+        m.setIcon(android.R.drawable.ic_menu_view);
         m = menu.add(Menu.NONE, ID_MENU_PREFS, Menu.NONE, R.string.menu_preferences);
         m.setIcon(android.R.drawable.ic_menu_preferences);
         return super.onCreateOptionsMenu(menu);
@@ -244,6 +245,22 @@ public class BGDictum extends Activity implements DB,
                 }, RecentSearchesConnector.ITEM)
                 .setTitle(R.string.history)
                 .create();
+        } else if (DLG_CONFIRM_NOSDCARD == id) {
+            return new AlertDialog.Builder(this)
+                .setTitle(R.string.warning)
+                .setMessage(R.string.no_sdcard_setup_message)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        postCreateCheckDB();
+                    }
+                })
+                .setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).create();
         }
         return super.onCreateDialog(id);
     }

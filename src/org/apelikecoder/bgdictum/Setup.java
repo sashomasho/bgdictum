@@ -63,6 +63,7 @@ public class Setup extends Activity implements DB, ProgressListener, OnCancelLis
         switch (id) {
             case DLG_CONFIRM_DOWNLOAD:
                 dlg = new AlertDialog.Builder(this)
+                    .setTitle(R.string.download_question_title)
                     .setMessage(R.string.download_question)
                     .setPositiveButton(R.string.download, new OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
