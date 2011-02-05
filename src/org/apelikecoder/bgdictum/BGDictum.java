@@ -30,7 +30,7 @@ public class BGDictum extends Activity implements DB,
     private SQLiteDatabase db;
     private MyAutoCompleteTextView searchField;
     private Button clear;
-    private WordView translation;
+    private WordView wordInfoArea;
     private InputMethodManager mgr;
     private App app;
     private Cursor historyCursor;
@@ -39,6 +39,7 @@ public class BGDictum extends Activity implements DB,
     public static final String FINISH_MSG = "start_fataility";
 
     private int TRANSLATION_COLUMN_INDEX = -1;
+    private int TRANSCRIPTION_COLUMN_INDEX = -1;
     private static final int ID_MENU_PREFS = 102;
     private static final int ID_MENU_HISTORY = 103;
     private static final int DLG_HISTORY = 1111;
@@ -54,8 +55,8 @@ public class BGDictum extends Activity implements DB,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         searchField = (MyAutoCompleteTextView) findViewById(R.id.search_edit_query);
-        translation = (WordView) findViewById(R.id.description_text);
-        translation.setPopup((PopupView)findViewById(R.id.popup));
+        wordInfoArea = (WordView) findViewById(R.id.description_text);
+        wordInfoArea.setPopup((PopupView)findViewById(R.id.popup));
         clear = (Button) findViewById(R.id.clear_text);
         clear.setOnClickListener(this);
         mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -102,7 +103,7 @@ public class BGDictum extends Activity implements DB,
     private void loadSettings() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         mClearHistory = sp.getBoolean(App.PreferenceKeys.preference_clear_history_on_exit, false);
-        translation.setPopupEnabled(sp.getBoolean(App.PreferenceKeys.preference_enable_word_click, false));
+        wordInfoArea.setClickEnabled(sp.getBoolean(App.PreferenceKeys.preference_enable_word_click, false));
     }
 
     @Override
@@ -147,6 +148,7 @@ public class BGDictum extends Activity implements DB,
             searchField.setOnItemClickListener(this);
             c = db.query(TABLE_TRANSLATIONS, null, null, null, null, null, null);
             TRANSLATION_COLUMN_INDEX = c.getColumnIndexOrThrow(COLUMN_TRANSLATION);
+            TRANSCRIPTION_COLUMN_INDEX = c.getColumnIndexOrThrow(COLUMN_TRANSCRIPTION);
             c.close();
         } catch (SQLiteException ex) {
             ex.printStackTrace();
@@ -161,8 +163,11 @@ public class BGDictum extends Activity implements DB,
         if (c.moveToFirst()) {
             if (c.getString(c.getColumnIndex(COLUMN_WORD)).equals(word)) {
                 searchField.setText(word, false);
-                setWordInfo(word, getTranslation(c.getInt(c.getColumnIndex(DB.COLUMN_ID))));
-                set = true;
+                String res[] = getTranslation(c.getInt(c.getColumnIndex(DB.COLUMN_ID)));
+                if (res != null) {
+                    setWordInfo(word, res[1], res[0]);
+                    set = true;
+                }
             }
         }
         if (!set)
@@ -171,25 +176,28 @@ public class BGDictum extends Activity implements DB,
         c.close();
     }
 
-    private void setWordInfo(String word, String info) {
-        translation.setWordInfo(word, info);
+    private void setWordInfo(String word, String translation, String info) {
+        wordInfoArea.setWordInfo(word, translation, info);
         app.getRecentConnector().addSearch(word);
         mgr.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
     }
 
     public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-        String s = getTranslation(id);
+        String[] s = getTranslation(id);
         if (s != null) {
             String word = searchField.getText().toString();
-            setWordInfo(word, s);
+            setWordInfo(word, s[1], s[0]);
         }
     }
 
-    private String getTranslation(long id) {
+    private String[] getTranslation(long id) {
         Cursor c = db.query(TABLE_TRANSLATIONS, null, COLUMN_WORD_ID + "='" + id + "'", null, null, null, null);
-        String res = null;
-        if (c.moveToFirst())
-            res = c.getString(TRANSLATION_COLUMN_INDEX);
+        String[] res = null;
+        if (c.moveToFirst()) {
+            res = new String[2];
+            res[0] = c.getString(TRANSLATION_COLUMN_INDEX);
+            res[1] = c.getString(TRANSCRIPTION_COLUMN_INDEX);
+        }
         c.close();
         return res;
     } 

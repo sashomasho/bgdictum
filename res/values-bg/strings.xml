@@ -21,9 +21,11 @@
     <string name="preference_use_light_theme_summary">Използване на светла тема в програмата (*Изисква рестарт)</string>
     <string name="preference_look_and_feel">Визуални настройки</string>
     <string name="preference_enable_word_click">Търсене чрез селектиране в резултата</string>
-    <string name="preference_enable_word_click_summary">(*Изисква рестарт)</string>
     <string name="warning">Внимание</string>
     <string name="no_sdcard_setup_message">Не е намерена SD карта в устройството. Искате ли данните да се изтеглят във вътрешната памет?</string>
     <string name="yes">Да</string>
     <string name="query_hint">търсене</string>
+    <string name="preferences_text_font">Шрифт</string>
+    <string name="preferences_text_font_summary">Шрифт на текста (*Изисква рестарт)</string>
+
 </resources>

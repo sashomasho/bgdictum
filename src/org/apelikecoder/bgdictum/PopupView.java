@@ -14,12 +14,31 @@ public class PopupView extends View {
 
     public PopupView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        bgPaint.setColor(0xee6f0000);
+        bgPaint.setAntiAlias(true);
+        textPaint.setColor(0xeeffffff);
+        textPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        textPaint.setTextSize(20);
+        textPaint.setAntiAlias(true);
+        borderPaint.setColor(Color.WHITE);
+        borderPaint.setAntiAlias(true);
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(1.4f);
     }
 
     private static final int DEFAULT_OFFSET = 40;
-
+    private static final int PADDING = 20;
     private String mText;
     private int posX, posY;
+    private Paint bgPaint = new Paint();
+    private Paint textPaint = new Paint();
+    private Paint borderPaint = new Paint();
+    private Rect textBounds = new Rect();
+    private RectF textBoundsF = new RectF();
+
+    public void setTypeFace(Typeface typeface) {
+        textPaint.setTypeface(typeface);
+    }
 
     public void setPopupText(int x, int y, String text) {
         this.posX = x;
@@ -56,7 +75,7 @@ public class PopupView extends View {
             rf.offset(tx - hw, ty + offsetY);
             float br = 4.0f;
             canvas.drawRoundRect(rf, br, br, bgPaint);
-            canvas.drawText(mText, rf.left + padding / 2, rf.bottom - r.height() / 3, textPaint);
+            canvas.drawText(mText, rf.left + PADDING / 2, rf.bottom - r.height() / 3, textPaint);
             rf.inset(1.0f, 1.0f);
             canvas.drawRoundRect(rf, br, br, borderPaint);
         }
@@ -68,31 +87,12 @@ public class PopupView extends View {
     }
     
 
-    static int padding = 20;
-    static Paint bgPaint = new Paint();
-    static Paint textPaint = new Paint();
-    static Paint borderPaint = new Paint();
-    static Rect textBounds = new Rect();
-    static RectF textBoundsF = new RectF();
-    static {
-        bgPaint.setColor(0xee6f0000);
-        bgPaint.setAntiAlias(true);
-        textPaint.setColor(0xeeffffff);
-        textPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
-        textPaint.setTextSize(20);
-        textPaint.setAntiAlias(true);
-        borderPaint.setColor(Color.WHITE);
-        borderPaint.setAntiAlias(true);
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(1.4f);
-    }
-
-    private static Rect getTextSize(String word, Paint textPaint) {
+    private Rect getTextSize(String word, Paint textPaint) {
         Rect rect = textBounds;
         rect.setEmpty();
         textPaint.getTextBounds(word, 0, word.length(), rect);
-        rect.right += padding;
-        rect.bottom += padding;
+        rect.right += PADDING;
+        rect.bottom += PADDING;
         return rect;
     }
 

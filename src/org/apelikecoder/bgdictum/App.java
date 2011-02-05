@@ -18,6 +18,7 @@ public class App extends Application implements DB {
         public static final String preference_enable_word_click_popup = "preference_enable_word_click_popup";
         public static final String preference_history = "history";
         public static final String preference_clear_history_on_exit = "preference_clear_history_on_exit";
+        public static final String preference_font_idx = "preference_font_index";
     }
 
     private SQLiteDatabase db;

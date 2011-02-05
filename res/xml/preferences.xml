@@ -15,11 +15,17 @@
         <CheckBoxPreference
             android:key="preference_enable_word_click"
             android:title="@string/preference_enable_word_click"
-            android:summaryOn="@string/preference_enable_word_click_summary"
-            android:summaryOff="@string/preference_enable_word_click_summary"
             android:defaultValue="false"
         />
 
+        <ListPreference
+            android:key="preference_font_index"
+            android:entryValues="@array/font_indexes"
+            android:entries="@array/font_names"
+            android:defaultValue="sans"
+            android:title="@string/preferences_text_font"
+            android:summary="@string/preferences_text_font_summary"
+        />
 <!--
         <CheckBoxPreference
             android:key="preference_enable_word_click_popup"

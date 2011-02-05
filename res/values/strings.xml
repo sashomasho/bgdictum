@@ -28,11 +28,23 @@
     <string name="preference_use_light_theme_summary">(*Requires restart)</string>
     <string name="preference_look_and_feel">Look and feel</string>
     <string name="preference_enable_word_click">Enable word clicking</string>
-    <string name="preference_enable_word_click_summary">(*Requires restart)</string>
     <string name="preference_enable_word_click_popup">Enable popup</string>
     <string name="warning">Warning</string>
     <string name="no_sdcard_setup_message">Your sdcard is not currenntly mounted. Do you want to download and extract dictionary data on internal storage?</string>
     <string name="yes">Yes</string>
     <string name="can_t_find_db_is_your_sdcard_mounted">Can\'t find db, is your sdcard mounted?</string>
     <string name="query_hint">type text here</string>
+    <string name="preferences_text_font">Text Font</string>
+    <string name="preferences_text_font_summary">Select text font (*Requires restart)</string>
+
+    <string-array name="font_indexes">
+        <item>sans</item>
+        <item>serif</item>
+    </string-array>
+
+    <string-array name="font_names">
+        <item>Sans</item>
+        <item>Serif</item>
+    </string-array>
+
 </resources>

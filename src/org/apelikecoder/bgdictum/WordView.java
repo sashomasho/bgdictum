@@ -1,22 +1,29 @@
 package org.apelikecoder.bgdictum;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.View.OnTouchListener;
+import android.view.ViewParent;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -25,7 +32,13 @@ public class WordView extends TextView implements OnTouchListener {
     private PopupView popup;
     private String infoWord;
     private ScrollView parent;
-    private boolean mPopupEnabled;
+    private boolean mClickEnabled;
+    private Typeface transTypeFace, transTypeFaceBold;
+    private static final Map<String, String[]> FONTS = new HashMap<String, String[]>();
+    static {
+        FONTS.put("sans", new String[] { "DejaVuSansCondensed.ttf", "DejaVuSansCondensed-Bold.ttf"});
+        FONTS.put("serif", new String[] { "DejaVuSerifCondensed.ttf", "DejaVuSerifCondensed-Bold.ttf"});
+    }
 
     private class Type1Span extends ClickableSpan {
         String word;
@@ -36,13 +49,16 @@ public class WordView extends TextView implements OnTouchListener {
         public void updateDrawState(TextPaint ds) {
             super.updateDrawState(ds);
             ds.setUnderlineText(touchedInstance == this);
+            ds.setTypeface(transTypeFace);
         }
         @Override
         public void onClick(View widget) {
-            Uri uri = Uri.parse("bgdictum://" + word);
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            widget.getContext().startActivity(intent);
+            if (mClickEnabled) {
+                Uri uri = Uri.parse("bgdictum://" + word);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                widget.getContext().startActivity(intent);
+            }
         }
     };
 
@@ -53,7 +69,19 @@ public class WordView extends TextView implements OnTouchListener {
         @Override
         public void updateDrawState(TextPaint ds) {
             super.updateDrawState(ds);
-            ds.setTypeface(Typeface.DEFAULT_BOLD);
+            ds.setTypeface(transTypeFaceBold);
+        }
+    }
+
+    private class TranscriptionTypeSpan extends ForegroundColorSpan {
+        public TranscriptionTypeSpan(int color) {
+            super(color);
+        }
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            super.updateDrawState(ds);
+            ds.setTypeface(transTypeFaceBold);
+            //ds.setTypeface(Typeface.DEFAULT_BOLD);
         }
     }
 
@@ -75,6 +103,14 @@ public class WordView extends TextView implements OnTouchListener {
     }
 
     private void init() {
+        Context ctx = getContext();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String defaultType = FONTS.keySet().iterator().next();
+        String fontType = sp.getString(App.PreferenceKeys.preference_font_idx, defaultType);
+        if (!FONTS.containsKey(fontType)) fontType = defaultType;
+        transTypeFace = Typeface.createFromAsset(ctx.getAssets(), FONTS.get(fontType)[0]);
+        transTypeFaceBold = Typeface.createFromAsset(ctx.getAssets(), FONTS.get(fontType)[1]);
+        setTypeface(transTypeFaceBold);
         setMovementMethod(LinkMovementMethod.getInstance());
         setOnTouchListener(this);
     }
@@ -93,34 +129,36 @@ public class WordView extends TextView implements OnTouchListener {
                 true : super.onTouchEvent(event);
     }
 
-    public void setWordInfo(String word, String text) {
+    public void setWordInfo(String word, String translation, String text) {
         infoWord = word;
-        setText(infoWord.trim().toUpperCase() + "\n\n" + text);
+        translation = translation.trim();
+        translation = TextUtils.isEmpty(translation) ? "" : (translation + '\n');
+        setText(infoWord.trim().toUpperCase() + "\n" + translation + "\n"+ text);
     }
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        if (mPopupEnabled) {
-            Integer currentType = LinksFinder.getType(infoWord != null ? infoWord : ""); //XXX
-            ArrayList<LinksFinder.LinkSpec> links = LinksFinder.getLinks(text.toString());
-            if (links == null) {
-                super.setText(text, type);
-                return;
-            }
-            SpannableString ss = new SpannableString(text);
-            int links_length = links.size();
-            for (int i = 0; i < links_length; ++i) {
-                LinksFinder.LinkSpec l = links.get(i);
-                Type1Span span;
-                if (currentType == l.type)
-                    span = new Type2Span(l.url);
-                else
-                    span = new Type1Span(l.url);
-                ss.setSpan(span, l.start, l.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            text = ss;
+        Integer currentType = LinksFinder.getType(infoWord != null ? infoWord : ""); //XXX
+        ArrayList<LinksFinder.LinkSpec> links = LinksFinder.getLinks(text.toString());
+        if (links == null) {
+            super.setText(text, type);
+            return;
         }
-        super.setText(text, type);
+        SpannableString ss = new SpannableString(text);
+        int links_length = links.size();
+        for (int i = 0; i < links_length; ++i) {
+            LinksFinder.LinkSpec l = links.get(i);
+            CharacterStyle span;
+            if (LinksFinder.TRANSCRIPTION == l.type) {
+                span = new TranscriptionTypeSpan(0xffc91111);
+            } else if (currentType == l.type) {
+                span = new Type2Span(l.url);
+            } else {
+                span = new Type1Span(l.url);
+            }
+            ss.setSpan(span, l.start, l.end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        super.setText(ss, type);
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -149,7 +187,7 @@ public class WordView extends TextView implements OnTouchListener {
             } else {
                 touchedInstance = null;
             }
-            if (mPopupEnabled && popup != null && touchedInstance != null)
+            if (mClickEnabled && popup != null && touchedInstance != null)
                 popup.setPopupText(xx, yy, touchedInstance.word);
         } else {
             if (popup != null)
@@ -163,6 +201,7 @@ public class WordView extends TextView implements OnTouchListener {
 
     public void setPopup(PopupView popup) {
         this.popup = popup;
+        this.popup.setTypeFace(transTypeFaceBold);
     }
 
     private int getRealPosX(int val) {
@@ -173,7 +212,7 @@ public class WordView extends TextView implements OnTouchListener {
         return parent == null ? val : val - parent.getScrollY();
     }
 
-    public void setPopupEnabled(boolean enabled) {
-        mPopupEnabled = enabled;
+    public void setClickEnabled(boolean enabled) {
+        mClickEnabled = enabled;
     } 
 }

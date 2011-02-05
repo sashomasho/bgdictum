@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    >
 
     <LinearLayout
         android:id="@+id/input_area"
@@ -41,10 +42,11 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp">
+        >
 
         <org.apelikecoder.bgdictum.WordView
             android:id="@+id/description_text"
+            android:layout_marginRight="2dp"
             android:textSize="18sp"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
