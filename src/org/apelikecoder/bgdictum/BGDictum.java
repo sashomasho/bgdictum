@@ -62,13 +62,13 @@ public class BGDictum extends Activity implements DB,
         mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         app = (App) getApplication();
 
-        postCreateCheckDB();
         if (app.getDb() == null &&
                 !Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             showDialog(DLG_CONFIRM_NOSDCARD);
             skipExit = true;
+        } else {
+            postCreateCheckDB();
         }
-        
     };
 
     private void postCreateCheckDB() { 

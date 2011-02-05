@@ -57,6 +57,7 @@ public class App extends Application implements DB {
         System.out.println("UP AND RUNNING");
         //registerReceiver(sdcardReceiver, new IntentFilter(Intent.ACTION_MEDIA_EJECT));
         //registerReceiver(sdcardReceiver, new IntentFilter(Intent.ACTION_MEDIA_MOUNTED));
+        setupDB();
     }
     
     public SQLiteDatabase getDb() {
@@ -71,7 +72,7 @@ public class App extends Application implements DB {
                 f.mkdirs();
         }
         if (f == null || !f.canWrite()) {
-            Toast.makeText(this, R.string.no_sdcard_warning, Toast.LENGTH_SHORT);
+            Toast.makeText(this, R.string.no_sdcard_warning, Toast.LENGTH_SHORT).show();
             f = getDir("dict", MODE_PRIVATE);
         }
         dataPath = f.getAbsolutePath();

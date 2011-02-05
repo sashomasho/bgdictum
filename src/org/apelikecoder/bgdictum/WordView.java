@@ -105,7 +105,7 @@ public class WordView extends TextView implements OnTouchListener {
     private void init() {
         Context ctx = getContext();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String defaultType = FONTS.keySet().iterator().next();
+        String defaultType = "sans";
         String fontType = sp.getString(App.PreferenceKeys.preference_font_idx, defaultType);
         if (!FONTS.containsKey(fontType)) fontType = defaultType;
         transTypeFace = Typeface.createFromAsset(ctx.getAssets(), FONTS.get(fontType)[0]);
